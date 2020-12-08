@@ -4,12 +4,14 @@ const router = express.Router();
 const DataModel = require("../models/Data");
 
 router.post("/add", async (req, res) => {
+  
   const Data = new DataModel({
     todo: req.body.todo,
   });
 
   Data.save()
     .then((respon) => {
+      console.log(respon)
       res.send(respon);
     })
     .catch((err) => {

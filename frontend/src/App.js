@@ -1,87 +1,87 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import "./App.css";
-function TodoForm({ addTodo }) {
-  const [value, setValue] = React.useState("");
+import axios from "axios";
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!value) return;
-    addTodo(value);
-    setValue("");
+const App = () => {
+  const { register, handleSubmit } = useForm();
+  const [todos, setTodos] = useState([]);
+  const [isComplite, setIsComplite] = useState(false);
+
+  const onSubmit = (data) => {
+    return axios
+      .post("http://localhost:4000/api/add", data)
+      .then(todos.push(data))
+      .then(function (response) {
+        console.log("fnh55", response.data);
+      })
+
+      .catch(function (error) {
+        console.log(error);
+      });
   };
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label className="label"> Task </label>
-        <input
-          type="text"
-          className="input"
-          value={value}
-          name="task"
-          onChange={(e) => setValue(e.target.value)}
-          placeholder="What do you need to do?"
-        />
+  const todoListV = () => {
+    return axios
+      .get("http://localhost:4000/api/all")
 
-        <input className="submit" type="submit" name="save" value="Save Item" />
+      .then((response) => setTodos(response.data))
+      .then(console.log("afnan"))
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+ const deleteTodo = (_id) => {
+    return axios
+      .delete("http://localhost:4000/api/all/" + _id)
+      .then((res) => console.log("item " + _id + " has been deleted"))
+      .then(
+        setTimeout(function () {
+          window.location.reload();
+        }, 200)
+      )
+      .catch((error) =>
+        console.log(error + " " + "from axios delete" + " " + _id)
+      );
+  };
+  useEffect(() => {
+    todoListV();
+  }, []);
+
+  return (
+    <div className="todolist">
+      <div className="heading">
+        <h1 className="title">To-Do List</h1>
       </div>
-    </form>
-  );
-}
-
-function Todo({ todo, index, completeTodo, removeTodo }) {
-  return (
-    <div className="todo" style={{ background: todo.isCompleted ? "#A6FBF4" : "" }}>
-      {todo.text}
-      <div>
-        <button className="button1" onClick={() => completeTodo(index)}>
-          ✔
-        </button>
-        <button className="button2" onClick={() => removeTodo(index)}>
-          X
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function App() {
-  const [todos, setTodos] = React.useState([]);
-
-  const addTodo = (text) => {
-    const newTodos = [...todos, { text }];
-    setTodos(newTodos);
-  };
-
-  const completeTodo = (index) => {
-    const newTodos = [...todos];
-    newTodos[index].isCompleted = true;
-    setTodos(newTodos);
-  };
-
-  const removeTodo = (index) => {
-    const newTodos = [...todos];
-    newTodos.splice(index, 1);
-    setTodos(newTodos);
-  };
-
-  return (
-    <div className="app">
-      <div className="todo-list">
-        <h2>TO DO:</h2>
-        {todos.map((todo, index) => (
-          <Todo
-            key={index}
-            index={index}
-            todo={todo}
-            completeTodo={completeTodo}
-            removeTodo={removeTodo}
+      <div className="todo">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <input
+            name="todo"
+            className="input"
+            placeholder="What do you need to do?"
+            ref={register}
           />
-        ))}
-        <TodoForm addTodo={addTodo} />
+
+          <input className="submit" type="submit" value="Save Item" />
+        </form>
+      </div>
+
+      <div className="items">
+        <ul>
+          {todos.map((todof) => (
+            <li id="list-item" key={todof._id}>
+              <span className="lilist" id="todo">
+                {todof.todo}
+              </span>
+              <button className="button2" onClick={() => deleteTodo(todof._id)}>
+                {" "}
+                X
+              </button>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
-}
-
+};
 export default App;
