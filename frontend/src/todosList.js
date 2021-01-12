@@ -6,7 +6,7 @@ import axios from "axios";
 const todosList = () => { 
     const todoListV = () => {
         axios
-          .get("http://localhost:4000/api/all")
+          .get("https://to-do-app-backend-mern-stack.herokuapp.com/api/all")
           .then(function (response) {
             console.log("fnh", response);
           })

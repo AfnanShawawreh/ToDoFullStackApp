@@ -2,15 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import "./App.css";
 import axios from "axios";
-
 const App = () => {
   const { register, handleSubmit } = useForm();
   const [todos, setTodos] = useState([]);
-  const [isComplite, setIsComplite] = useState(false);
+  // const [isComplite, setIsComplite] = useState(false);
 
   const onSubmit = (data) => {
     return axios
-      .post("http://localhost:4000/api/add", data)
+      .post("https://to-do-app-backend-mern-stack.herokuapp.com/api/add", data)
       .then(todos.push(data))
       .then(function (response) {
         console.log("fnh55", response.data);
@@ -23,7 +22,7 @@ const App = () => {
 
   const todoListV = () => {
     return axios
-      .get("http://localhost:4000/api/all")
+      .get("https://to-do-app-backend-mern-stack.herokuapp.com/api/all")
 
       .then((response) => setTodos(response.data))
       .then(console.log("afnan"))
@@ -33,7 +32,7 @@ const App = () => {
   };
  const deleteTodo = (_id) => {
     return axios
-      .delete("http://localhost:4000/api/all/" + _id)
+      .delete("https://to-do-app-backend-mern-stack.herokuapp.com/api/all/" + _id)
       .then((res) => console.log("item " + _id + " has been deleted"))
       .then(
         setTimeout(function () {
@@ -41,7 +40,7 @@ const App = () => {
         }, 200)
       )
       .catch((error) =>
-        console.log(error + " " + "from axios delete" + " " + _id)
+        console.log(error + "  from axios delete " + _id)
       );
   };
   useEffect(() => {
